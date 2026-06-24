@@ -25,7 +25,7 @@ jobs:
           java-version: 17
 
       - name: Make gradlew executable
-        run: chmod +x project/gradlew
+        run: chmod +x project/lagzero/gradlew
 
       - name: Build APK
         run: cd project && ./gradlew assembleRelease --stacktrace

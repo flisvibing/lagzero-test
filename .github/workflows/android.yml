@@ -14,6 +14,9 @@ jobs:
       - name: Install unzip
         run: sudo apt-get update && sudo apt-get install -y unzip
 
+      - name: Marker
+        run: echo "UMUT TEST 12345"
+
       - name: Extract ZIP
         run: |
           unzip -o lagzero.zip -d project

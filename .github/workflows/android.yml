@@ -1,10 +1,10 @@
-name: Debug Android ZIP
+name: Verify Gradle Wrapper
 
 on:
   workflow_dispatch:
 
 jobs:
-  debug:
+  verify:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,31 +16,32 @@ jobs:
 
       - name: Extract ZIP
         run: |
-          unzip lagzero.zip -d project
+          unzip -o lagzero.zip -d project
 
-      - name: Show structure
+      - name: Find wrapper
         run: |
-          find project | head -200
+          find project -name gradle-wrapper.jar
+          find project -name gradlew
 
-      - name: Check gradle wrapper
+      - name: Verify wrapper
         run: |
           JAR=$(find project -name gradle-wrapper.jar | head -n 1)
 
-          echo "JAR path:"
+          echo "JAR PATH:"
           echo "$JAR"
 
           echo
-          echo "File info:"
+          echo "FILE INFO:"
           file "$JAR"
 
           echo
-          echo "Size:"
+          echo "SIZE:"
           ls -lh "$JAR"
 
           echo
-          echo "Trying to read JAR:"
-          unzip -l "$JAR" | head -50
+          echo "SHA256:"
+          sha256sum "$JAR"
 
-      - name: Check gradlew
-        run: |
-          find project -name gradlew
+          echo
+          echo "JAR CONTENTS:"
+          jar tf "$JAR" | head -50

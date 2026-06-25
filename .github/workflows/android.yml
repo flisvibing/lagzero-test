@@ -1,15 +1,14 @@
-name: Android Build (ZIP Safe)
+name: Debug Android ZIP
 
 on:
   workflow_dispatch:
-  push:
 
 jobs:
-  build:
+  debug:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install unzip
@@ -18,22 +17,30 @@ jobs:
       - name: Extract ZIP
         run: |
           unzip lagzero.zip -d project
-          ls -R project
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-
-      - name: Find gradlew path and build
+      - name: Show structure
         run: |
-          chmod +x $(find project -name gradlew)
-          cd $(dirname $(find project -name gradlew)) 
-          ./gradlew assembleRelease --stacktrace
+          find project | head -200
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apk
-          path: project/**/app/build/outputs/apk/release/*.apk
+      - name: Check gradle wrapper
+        run: |
+          JAR=$(find project -name gradle-wrapper.jar | head -n 1)
+
+          echo "JAR path:"
+          echo "$JAR"
+
+          echo
+          echo "File info:"
+          file "$JAR"
+
+          echo
+          echo "Size:"
+          ls -lh "$JAR"
+
+          echo
+          echo "Trying to read JAR:"
+          unzip -l "$JAR" | head -50
+
+      - name: Check gradlew
+        run: |
+          find project -name gradlew
